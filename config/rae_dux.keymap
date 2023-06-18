@@ -5,9 +5,15 @@
  */
 
 #include <behaviors.dtsi>
-#include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/outputs.h>
 #include <dt-bindings/zmk/keys.h>
+#include "helper.h"
+
+#define TOP  0
+#define SYM  1
+#define NUM  2
+#define NAV  3
+#define ADJ  4
 
 /* stick key */
 &sk {
@@ -19,140 +25,85 @@
     continue-list = <UNDERSCORE MINUS BSPC>;
 };
 
-#define BASE_L  0
-#define SYM_L   1
-#define NUM_L   2
-#define NAV_L   3
-#define ADJ_L   4
-#define BLE_L   5
+HOLD_TAP(hrm,  "tap-unless-interrupted", 75, 75, &kp, &kp)
+HOLD_TAP(tmt,  "hold-preferred", 200, 200, &kp, &kp)
+HOLD_TAP(lht,  "hold-preferred", 200, 200, &mo, &kp)
 
+TAP_DANCE(altdance,   200, &sk RALT, &sk LALT)
+TAP_DANCE(ctrltabgui, 200, &tmt LCTRL TAB, &sk LGUI)
 
-/ {
-    macros {
-        ZMK_MACRO(scope, wait-ms = <30>; tap-ms = <30>; bindings = <&kp COLON &kp COLON>;)
-        ZMK_MACRO(lambda, wait-ms = <30>; tap-ms = <30>; bindings = <&kp L &kp A &kp M &kp B &kp D &kp A>;)
-    };
+MACRO(sub_arrow, 30, 30, &kp MINUS &kp GT)
+MACRO(fat_arrow, 30, 30, &kp EQUAL &kp GT)
+MACRO(eli_arrow, 30, 30, &kp TILDE &kp GT)
 
-    combos {
-        compatible = "zmk,combos";
-        combo_ble_layer {
-          timeout-ms = <50>;
-          key-positions = <34 35>;
-          bindings = <&mo BLE_L>;
-        };
+/*                KEY POSITIONS
+  ╭────────────────────╮ ╭────────────────────╮
+  │  0   1   2   3   4 │ │  5   6   7   8   9 │
+  │ 10  11  12  13  14 │ │ 15  16  17  18  19 │
+  │ 20  21  22  23  24 │ │ 25  26  27  28  29 │
+  ╰───────╮ 30  31  32 │ │ 33  34  35 ╭───────╯
+          ╰────────────╯ ╰────────────╯        */
+ZMK_COMBO(combo_caps,      &caps_word, 31 34, ALL, 50)
+ZMK_COMBO(combo_sub_arrow, &sub_arrow, 18 19, ALL, 50)
+ZMK_COMBO(combo_fat_arrow, &fat_arrow,  8  9, ALL, 50)
+ZMK_COMBO(combo_eli_arrow, &eli_arrow, 28 29, ALL, 50)
 
+#define SSPACE LSHFT SPACE
 
-        /*                KEY POSITIONS
+ZMK_LAYER(base_layer,
+  // ╭─────────────┬─────────────┬─────────────┬─────────────┬─────────────╮   ╭─────────────┬─────────────┬─────────────┬─────────────┬─────────────╮
+      &kp Q         &kp W          &kp F         &kp P         &kp B            &kp J         &kp L         &kp U         &kp Y         &kp SEMI
+  // ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤   ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤
+      &hrm LGUI A   &hrm LCTRL R  &hrm LSHFT S  &hrm LALT T   &hrm RALT G       &hrm RALT M   &hrm LALT N   &hrm RSHFT E  &hrm LCTRL I  &hrm RGUI O
+  // ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤   ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤
+      &kp Z         &kp X         &kp C         &kp D         &kp V             &kp K         &kp H         &kp COMMA     &kp DOT       &kp FSLH
+  // ╰─────────────┴─────────────┼─────────────┼─────────────┼─────────────┤   ├─────────────┼─────────────┼─────────────┼─────────────┴─────────────╯
+                                  &ctrltabgui   &tmt SSPACE   &lht SYM ESC      &lht NUM BSPC &lht NAV RET  &altdance
+  //                             ╰─────────────┴─────────────┴─────────────╯   ╰─────────────┴─────────────┴─────────────╯
+)
+ZMK_LAYER(sym_layer,
+  // ╭─────────────┬─────────────┬─────────────┬─────────────┬─────────────╮   ╭─────────────┬─────────────┬─────────────┬─────────────┬─────────────╮
+      &none         &none         &kp LBRC      &kp RBRC      &none             &kp RA(N6)    &kp RA(SQT)   &kp RA(DQT)   &kp RA(GRAVE) &kp RA(COMMA)
+  // ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤   ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤
+      &trans        &trans        &kp LPAR      &kp RPAR      &trans            &kp CARET     &kp SQT       &kp DQT       &kp GRAVE     &kp BSLH
+  // ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤   ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤
+      &none         &trans        &kp LBKT      &kp RBKT      &none             &none         &none         &trans        &trans        &trans
+  // ╰─────────────┴─────────────┼─────────────┼─────────────┼─────────────┤   ├─────────────┼─────────────┼─────────────┼─────────────┴─────────────╯
+                                  &trans        &trans        &trans            &trans        &trans        &trans
+  //                             ╰─────────────┴─────────────┴─────────────╯   ╰─────────────┴─────────────┴─────────────╯
+)
+ZMK_LAYER(num_layer,
+  // ╭─────────────┬─────────────┬─────────────┬─────────────┬─────────────╮   ╭─────────────┬─────────────┬─────────────┬─────────────┬─────────────╮
+      &none         &none         &none         &none         &none             &kp EQUAL     &kp N7        &kp N8        &kp N9        &kp SQT
+  // ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤   ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤
+      &kp LGUI      &kp LCTRL     &kp LSHFT     &kp LALT      &kp RALT          &kp MINUS     &kp N4        &kp N5        &kp N6        &kp N0
+  // ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤   ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤
+      &none         &none         &none         &none         &none             &kp ASTRK     &kp N1        &kp N2        &kp N3        &kp DOT
+  // ╰─────────────┴─────────────┼─────────────┼─────────────┼─────────────┤   ├─────────────┼─────────────┼─────────────┼─────────────┴─────────────╯
+                                  &trans        &trans        &trans            &trans        &trans        &trans
+  //                             ╰─────────────┴─────────────┴─────────────╯   ╰─────────────┴─────────────┴─────────────╯
 
-          ╭────────────────────╮ ╭────────────────────╮
-          │  0   1   2   3   4 │ │  5   6   7   8   9 │
-          │ 10  11  12  13  14 │ │ 15  16  17  18  19 │
-          │ 20  21  22  23  24 │ │ 25  26  27  28  29 │
-          ╰───────╮ 30  31  32 │ │ 33  34  35 ╭───────╯
-                  ╰────────────╯ ╰────────────╯        */
+)
+ZMK_LAYER(nav_layer,
+  // ╭─────────────┬─────────────┬─────────────┬─────────────┬─────────────╮   ╭─────────────┬─────────────┬─────────────┬─────────────┬─────────────╮
+      &none         &none         &none         &none         &none             &kp PG_UP     &kp HOME      &kp UP        &kp END       &none
+  // ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤   ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤
+      &trans        &trans        &trans        &trans        &trans            &kp PG_DN     &kp LEFT      &kp DOWN      &kp RIGHT     &none
+  // ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤   ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤
+      &none         &none         &none         &none         &none             &kp DEL       &kp INSERT    &trans        &trans        &none
+  // ╰─────────────┴─────────────┼─────────────┼─────────────┼─────────────┤   ├─────────────┼─────────────┼─────────────┼─────────────┴─────────────╯
+                                  &trans        &trans        &lht ADJ          &trans        &trans        &trans
+  //                             ╰─────────────┴─────────────┴─────────────╯   ╰─────────────┴─────────────┴─────────────╯
+)
+ZMK_LAYER(adj_layer,
+  // ╭─────────────┬─────────────┬─────────────┬─────────────┬─────────────╮   ╭─────────────┬─────────────┬─────────────┬─────────────┬─────────────╮
+      &none         &none         &none         &none         &none             &kp F1        &kp F2        &kp F3        &kp F4        &kp F5
+  // ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤   ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤
+      &trans        &trans        &trans        &trans        &trans            &kp F6        &kp F7        &kp F8        &kp F9        &kp F10
+  // ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤   ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤
+      &none         &none         &none         &none         &none             &kp DEL       &kp INSERT    &trans        &trans        &none
+  // ╰─────────────┴─────────────┼─────────────┼─────────────┼─────────────┤   ├─────────────┼─────────────┼─────────────┼─────────────┴─────────────╯
+                                  &trans        &trans        &trans            &trans        &trans        &trans
+  //                             ╰─────────────┴─────────────┴─────────────╯   ╰─────────────┴─────────────┴─────────────╯
+)
 
-    };
-
-    behaviors {
-        lhm: left_hand_positional_hold_tap {
-            compatible = "zmk,behavior-hold-tap";
-            label = "LEFT_POSITIONAL_HOLD_TAP";
-            #binding-cells = <2>;
-            flavor = "tap-preferred";
-            tapping-term-ms = <200>;
-            quick-tap-ms = <200>;
-            bindings = <&kp>, <&kp>;
-            // hold-trigger-key-positions = <5 6 7 8 9 15 16 17 18 19 25 26 27 28 29 30 31 32 33 34 35>;
-            // hold-trigger-key-positions = <5 6 7 8 9 10 11 12 13 15 16 17 18 19 25 26 27 28 29 30 31 32 33 34 35>;
-        };
-
-        rhm: right_hand_positional_hold_tap {
-            compatible = "zmk,behavior-hold-tap";
-            label = "RIGHT_POSITIONAL_HOLD_TAP";
-            #binding-cells = <2>;
-            flavor = "tap-preferred";
-            tapping-term-ms = <200>;
-            quick-tap-ms = <200>;
-            bindings = <&kp>, <&kp>;
-            // hold-trigger-key-positions = <0 1 2 3 4 10 11 12 13 14 20 21 22 23 24 30 31 32 33 34 35>;
-            // hold-trigger-key-positions = <0 1 2 3 4 10 11 12 13 14 16 17 18 19 20 21 22 23 24 30 31 32 33 34 35>;
-        };
-        tmt: thumb_hold_tap {
-            compatible = "zmk,behavior-hold-tap";
-            label = "THUMB_HOLD_TAP";
-            #binding-cells = <2>;
-            flavor = "hold-preferred";
-            tapping-term-ms = <200>;
-            quick-tap-ms = <200>;
-            bindings = <&kp>, <&kp>;
-        };
-        base_lt: base_layer_hold_tap {
-            compatible = "zmk,behavior-hold-tap";
-            label = "BASE_LAYER_HOLD_TAP";
-            #binding-cells = <2>;
-            flavor = "hold-preferred";
-            tapping-term-ms = <200>;
-            quick-tap-ms = <200>;
-            bindings = <&mo>, <&kp>;
-        };
-    };
-
-	keymap {
-		compatible = "zmk,keymap";
-
-		base_layer {
-			bindings = <
-                   &kp Q        &kp W         &kp E        &kp R        &kp T     /*&  &*/    &kp Y              &kp U               &kp I                 &kp O         &kp P
-                   &lhm LGUI A  &lhm LCTRL S  &lhm LSHFT D &lhm LALT F  &kp G     /*&  &*/    &kp H              &rhm LALT J         &rhm RSHFT K          &rhm LCTRL L  &rhm RGUI SEMI
-                   &kp Z        &kp X         &kp C        &kp V        &kp B     /*&  &*/    &kp N              &kp M               &kp COMMA             &kp DOT       &kp FSLH
-				 /*&            &*/     &tmt LALT TAB  &tmt LSHFT SPC  &base_lt SYM_L ESC /*&  &*/  &base_lt NUM_L BSPC  &base_lt NAV_L RET  &tmt RALT &key_repeat /*&             &*/
-			>;
-		};
-
-		sym_layer {
-			bindings = <
-                   &trans       &kp RA(E)     &kp LBRC     &kp RBRC     &trans     /*&  &*/    &kp RA(N6)   &kp RA(SQT) &kp RA(DQT)  &kp RA(GRAVE) &kp RA(COMMA)
-                   &kp LSHFT    &trans        &kp LPAR     &kp RPAR     &trans     /*&  &*/    &kp CARET    &kp SQT      &kp DQT      &kp GRAVE    &kp BSLH
-                   &trans       &trans        &kp LBKT     &kp RBKT     &trans     /*&  &*/    &trans       &trans       &trans       &trans       &trans
-				 /*&                    &*/           &trans       &trans       &trans     /*&  &*/    &trans       &trans       &trans       /*&           &*/
-			>;
-		};
-
-		num_layer {
-			bindings = <
-                   &trans       &trans       &trans       &trans       &trans      /*&  &*/    &kp EQUAL    &kp N7       &kp N8       &kp N9       &kp SQT
-                   &kp LGUI     &kp LCTRL    &kp LSHFT    &kp LALT     &trans      /*&  &*/    &kp MINUS    &kp N4       &kp N5       &kp N6       &kp N0
-                   &trans       &trans       &trans       &trans       &trans      /*&  &*/    &kp ASTRK    &kp N1       &kp N2       &kp N3       &kp DOT
-				 /*&                   &*/           &trans       &trans       &trans      /*&  &*/    &trans       &trans       &trans       /*&             &*/
-			>;
-		};
-
-		nav_layer {
-			bindings = <
-                   &trans       &trans       &trans       &trans       &trans      /*&  &*/    &kp PG_UP    &kp HOME     &kp UP       &kp END      &trans
-                   &kp LGUI     &kp LCTRL    &kp LSHFT    &kp LALT     &trans      /*&  &*/    &kp PG_DN    &kp LEFT     &kp DOWN     &kp RIGHT    &trans
-                   &trans       &trans       &trans       &trans       &trans      /*&  &*/    &kp DEL      &trans       &trans       &trans       &trans
-				 /*&                    &*/          &trans       &trans       &mo ADJ_L   /*&  &*/    &trans       &trans       &trans       /*&           &*/
-			>;
-		};
-
-		adj_layer {
-			bindings = <
-                   &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4 /*&  &*/    &kp F1       &kp F2       &kp F3       &kp F4       &kp F5
-                   &trans       &trans       &trans       &out OUT_USB &out OUT_BLE /*&  &*/    &kp F6       &kp F7       &kp F8       &kp F9       &kp F10
-                   &bt BT_CLR   &bt BT_PRV   &bt BT_NXT   &trans       &bootloader  /*&  &*/    &kp F11      &kp F12      &trans       &trans       &trans
-				 /*&                    &*/          &trans       &trans       &trans       /*&  &*/    &trans       &trans       &trans       /*&            &*/
-			>;
-		};
-
-		ble_layer {
-			bindings = <
-                   &trans       &trans       &trans       &trans       &trans      /*&  &*/    &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4
-                   &trans       &trans       &trans       &trans       &trans      /*&  &*/    &trans       &trans       &trans       &trans       &trans
-                   &trans       &trans       &trans       &trans       &trans      /*&  &*/    &bt BT_CLR   &bt BT_PRV   &bt BT_NXT   &trans       &bootloader
-				 /*&                    &*/          &trans       &trans       &trans      /*&  &*/    &trans       &trans       &trans       /*&            &*/
-			>;
-		};
-
-	};
-};
