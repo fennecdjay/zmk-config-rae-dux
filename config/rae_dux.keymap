@@ -14,6 +14,7 @@
 #define NUM  2
 #define NAV  3
 #define ADJ  4
+#define TEST  5
 
 /* stick key */
 &sk {
@@ -25,7 +26,7 @@
     continue-list = <UNDERSCORE MINUS BSPC>;
 };
 
-HOLD_TAP(hrm,  "tap-unless-interrupted", 75, 75, &kp, &kp)
+HOLD_TAP(hrm,  "tap-unless-interrupted", 50, 50, &kp, &kp)
 HOLD_TAP(tmt,  "hold-preferred", 200, 200, &kp, &kp)
 HOLD_TAP(lht,  "hold-preferred", 200, 200, &mo, &kp)
 
@@ -48,11 +49,13 @@ ZMK_COMBO(combo_sub_arrow, &sub_arrow, 18 19, ALL, 50)
 ZMK_COMBO(combo_fat_arrow, &fat_arrow,  8  9, ALL, 50)
 ZMK_COMBO(combo_eli_arrow, &eli_arrow, 28 29, ALL, 50)
 
+ZMK_COMBO(combo_test_layer, &to TEST,  16  17  18  19, ALL, 50)
+
 #define SSPACE LSHFT SPACE
 
 ZMK_LAYER(base_layer,
   // ╭─────────────┬─────────────┬─────────────┬─────────────┬─────────────╮   ╭─────────────┬─────────────┬─────────────┬─────────────┬─────────────╮
-      &kp Q         &kp W          &kp F         &kp P         &kp B            &kp J         &kp L         &kp U         &kp Y         &kp SEMI
+      &kp Q         &kp W         &kp F         &kp P         &kp B             &kp J         &kp L         &kp U         &kp Y         &kp SEMI
   // ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤   ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤
       &hrm LGUI A   &hrm LCTRL R  &hrm LSHFT S  &hrm LALT T   &hrm RALT G       &hrm RALT M   &hrm LALT N   &hrm RSHFT E  &hrm LCTRL I  &hrm RGUI O
   // ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤   ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤
@@ -107,3 +110,14 @@ ZMK_LAYER(adj_layer,
   //                             ╰─────────────┴─────────────┴─────────────╯   ╰─────────────┴─────────────┴─────────────╯
 )
 
+ZMK_LAYER(test_layer,
+  // ╭─────────────┬─────────────┬─────────────┬─────────────┬─────────────╮   ╭─────────────┬─────────────┬─────────────┬─────────────┬─────────────╮
+      &none         &none         &none         &none         &none             &none         &none         &none         &none         &none
+  // ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤   ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤
+      &none         &none         &none         &none         &none             &none         &none         &none         &none         &none
+  // ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤   ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤
+      &none         &none         &none         &none         &none             &none         &none         &none         &none         &none
+  // ╰─────────────┴─────────────┼─────────────┼─────────────┼─────────────┤   ├─────────────┼─────────────┼─────────────┼─────────────┴─────────────╯
+                                  &to TOP       &to TOP       &to TOP           &to TOP       &to TOP       &to TOP
+  //                             ╰─────────────┴─────────────┴─────────────╯   ╰─────────────┴─────────────┴─────────────╯
+)
