@@ -32,7 +32,7 @@ HOLD_TAP(tmt,  "hold-preferred", 200, 200, &kp, &kp)
 HOLD_TAP(lht,  "hold-preferred", 200, 200, &mo, &kp)
 
 //TAP_DANCE(altdance,   200, &sk RALT, &sk LALT)
-TAP_DANCE(altdance,   200, &tmt &key_repeat RALT, &sk LALT)
+TAP_DANCE(altdance,   200, &tmt RALT &key_repeat, &sk LALT)
 TAP_DANCE(ctrltabgui, 200, &tmt LCTRL TAB, &sk LGUI)
 
 MACRO(sub_arrow, 30, 30, &kp MINUS &kp GT)
