@@ -15,6 +15,7 @@ ZMK_BEHAVIOR(name, hold_tap,                     \
     tapping-term-ms = <ttms>;                    \
     quick-tap-ms = <qtms>;                       \
     bindings = <k0>, <k1>;                       \
+    require-prior-idle-ms = <150>;               \
 )
 
 /*
